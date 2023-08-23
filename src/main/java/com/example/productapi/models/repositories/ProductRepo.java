@@ -17,5 +17,5 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
     // Custom.
     List<Product> findByName(String name);
-    List<Product> findByPrice(double price);
+    List<Product> findByPrice(Double price);
 }

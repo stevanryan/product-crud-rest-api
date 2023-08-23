@@ -13,7 +13,6 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 @Service
 @Transactional
 public class ProductService {
@@ -32,14 +31,14 @@ public class ProductService {
     }
 
     // Get product by product id.
-    public Product getProductById(long id) {
+    public Product getProductById(Long id) {
         return productRepo.findById(id)
             .orElseThrow(() -> new NoSuchElementException("Product isn't found with id " + id));
     }
 
     // Update product by product id.
     // Update same as create (using save), but the difference is when the id already exists, it will be an update.
-    public Product editProductById(long id, Product product) {
+    public Product editProductById(Long id, Product product) {
         Product isExist = productRepo.findById(id)
             .orElseThrow(() -> new NoSuchElementException("Cannot update. Product isn't found with id " + id));
         isExist.setName(product.getName());
@@ -50,7 +49,7 @@ public class ProductService {
     }
 
     // Delete product by product id.
-    public void deleteProductById(long id) {
+    public void deleteProductById(Long id) {
         Product isExist = productRepo.findById(id)
             .orElseThrow(() -> new NoSuchElementException("Cannot delete. Product isn't found with id " + id));
         productRepo.delete(isExist);
@@ -62,7 +61,7 @@ public class ProductService {
     }
 
     // Find product by product price.
-    public List<Product> getProductByPrice(double price) {
+    public List<Product> getProductByPrice(Double price) {
         return productRepo.findByPrice(price);
     }
 }
