@@ -2,7 +2,11 @@ package com.example.productapi.controllers;
 
 import com.example.productapi.models.entities.Product;
 import com.example.productapi.services.ProductService;
-import com.example.productapi.utils.ApiResponse.GetResponse;
+import com.example.productapi.utils.response.PostResponse;
+import com.example.productapi.utils.response.GetResponse;
+import com.example.productapi.utils.response.PutResponse;
+import com.example.productapi.utils.response.DeleteResponse;
+import com.example.productapi.utils.response.FailResponse;
 
 import java.util.List;
 
@@ -15,12 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api")
 public class ProductController {
-    GetResponse getResponse = new GetResponse();
     
     @Autowired
     // Flows: controller calls service, service calls repository.
@@ -28,35 +31,53 @@ public class ProductController {
 
     // Method: POST
     @PostMapping("/products")
-    public String postProductHandler(@RequestBody Product product) {
-        productService.addProduct(product);
-        return "Product added successfully";
+    public Object postProductHandler(@RequestBody Product product) {
+        try {
+            Product newProduct = productService.addProduct(product);
+            return PostResponse.postResponse("Product added successfully", "productId", newProduct.getId(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return FailResponse.failResponse("Failed to add product", HttpStatus.BAD_REQUEST);
+        }
     }
 
     // Method: GET
     @GetMapping("/products")
-    public List<Product> getProductsHandler() {
-        return productService.getProducts();
+    public Object getProductsHandler() {
+        List<Product> products = productService.getProducts();
+        return GetResponse.getAllResponse(products, HttpStatus.OK);
     }
 
     // Method: GET
     @GetMapping("/products/{id}")
-    public Product getProductByIdHandler(@PathVariable("id") long id) {
-        return productService.getProductById(id);
+    public Object getProductByIdHandler(@PathVariable("id") Long id) {
+        try {
+            Product foundProduct = productService.getProductById(id);
+            return GetResponse.getResponse(foundProduct, HttpStatus.OK);
+        } catch (Exception e) {
+            return FailResponse.failResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }   
     }
 
     // Method: PUT
     @PutMapping("/products/{id}")
-    public String putProductByIdHandler(@PathVariable("id") long id, @RequestBody Product product) {
-        productService.editProductById(id, product);
-        return "Product with id " + id + " updated successfully";
+    public Object putProductByIdHandler(@PathVariable("id") Long id, @RequestBody Product product) {
+        try {
+            productService.editProductById(id, product);
+            return PutResponse.putResponse("Product data updated successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return FailResponse.failResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     // Method: DELETE
     @DeleteMapping("/products/{id}")
-    public String deleteProductByIdHandler(@PathVariable("id") long id) {
-        productService.deleteProductById(id);
-        return "Product with id " + id + " deleted successfully";
+    public Object deleteProductByIdHandler(@PathVariable("id") Long id) {
+        try {
+            productService.deleteProductById(id);
+            return DeleteResponse.deleteResponse("Product deleted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return FailResponse.failResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
 }
