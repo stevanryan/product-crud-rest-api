@@ -1,29 +1,30 @@
 package com.example.productapi.utils.response;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.example.productapi.utils.responseModels.ApiResponseModel;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import java.util.List;
+import java.util.Collections;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-public class GetResponse {
+import lombok.Getter;
+import lombok.Setter;
 
-    public static ResponseEntity<Object> getResponse(Object data, HttpStatus statusCode) {
-        Map<String, Object> mapResponse = new LinkedHashMap<>();
-        mapResponse.put("httpStatus", statusCode.value());
-        mapResponse.put("status", "success");
-        mapResponse.put("data", data);
+@Setter
+@Getter
+@JsonPropertyOrder({ "httpStatus", "status", "message", "data" })
+public class GetResponse<T> extends ApiResponseModel {
 
-        return ResponseEntity.status(statusCode).body(mapResponse);
+    private Object data;
+
+    public GetResponse(HttpStatus httpStatus, String message, T data) {
+        super(httpStatus.value(), message);
+        this.setData(Collections.singletonMap("product", data));
     }
 
-    public static <E> ResponseEntity<Object> getAllResponse(List<E> data, HttpStatus statusCode) {
-        Map<String, Object> mapResponse = new LinkedHashMap<>();
-        mapResponse.put("httpStatus", statusCode.value());
-        mapResponse.put("status", "success");
-        mapResponse.put("data", data);
-
-        return ResponseEntity.status(statusCode).body(mapResponse);
+    public GetResponse(HttpStatus httpStatus, String message, List<T> data) {
+        super(httpStatus.value(), message);
+        this.setData(Collections.singletonMap("products", data));
     }
 }

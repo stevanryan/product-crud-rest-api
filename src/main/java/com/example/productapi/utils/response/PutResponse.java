@@ -1,19 +1,14 @@
 package com.example.productapi.utils.response;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.example.productapi.utils.responseModels.ApiResponseModel;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-public class PutResponse {
-    
-    public static ResponseEntity<Object> putResponse(String message, HttpStatus statusCode) {
-        Map<String, Object> mapResponse = new LinkedHashMap<>();
-        mapResponse.put("httpStatus", statusCode.value());
-        mapResponse.put("status", "success");
-        mapResponse.put("message", message);
+@JsonPropertyOrder({ "httpStatus", "status", "message" })
+public class PutResponse extends ApiResponseModel {
 
-        return ResponseEntity.status(statusCode).body(mapResponse);
+    public PutResponse(HttpStatus httpStatus, String message) {
+        super(httpStatus.value(), message);
     }
 }

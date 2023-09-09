@@ -1,20 +1,26 @@
 package com.example.productapi.utils.response;
 
-import java.util.LinkedHashMap;
+import com.example.productapi.utils.responseModels.ApiResponseModel;
+
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import java.util.Map;
+import java.util.Collections;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-public class PostResponse {
+import lombok.Setter;
+import lombok.Getter;
 
-    public static ResponseEntity<Object> postResponse(String message, String idType, Long id, HttpStatus statusCode) {
-        Map<String, Object> mapResponse = new LinkedHashMap<>();
-        mapResponse.put("httpStatus", statusCode.value());
-        mapResponse.put("status", "success");
-        mapResponse.put("message", message);
-        mapResponse.put(idType, id);
-
-        return ResponseEntity.status(statusCode).body(mapResponse);
+@Setter
+@Getter
+@JsonPropertyOrder({ "httpStatus", "status", "message", "data" })
+public class PostResponse extends ApiResponseModel {
+    
+    private Map<String, Object> data;
+    
+    public PostResponse(HttpStatus httpStatus, String message, String idType, Long id) {
+        super(httpStatus.value(), message);
+        this.setData(Collections.singletonMap(idType, id));
     }
 }
