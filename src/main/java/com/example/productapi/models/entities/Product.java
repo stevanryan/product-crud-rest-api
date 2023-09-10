@@ -8,10 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Setter;
+import lombok.Getter;
 
 @Entity // Mandatory.
 @Table(name = "products")
@@ -25,12 +28,16 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Id auto increment (unique for each id).
     private Long id;
 
+    @NotBlank(message = "name is required")
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = true)
+    @NotBlank(message = "description is required")
+    @Size(min = 20, max = 300, message = "description length must be between 20 and 300 characters")
+    @Column(nullable = false)
     private String description;
 
-    @Column(columnDefinition = "DOUBLE DEFAULT 0")
+    @DecimalMin(value = "0.0", message = "price must be greater than or equal to 0.0")
+    @Column(nullable = false)
     private Double price;
 }
